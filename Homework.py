@@ -18,122 +18,114 @@ class Person:
         self.personal_id = personal_id
         self.name = name
         self.city = city
-        self.fines = []
+        self.fines = None
 
-    def add_fine(self, fine):
-        self.fines.append(fine)
+    def add_person(self, personal_id, name, city ):#додавання особи
+        if personal_id not in self.fines:
+            self.fines[personal_id] = {"name": name, "city": city, "penalties": None}
+    def add_penalty(self, persona_id, penalty_type, penalty_amount):
+        if persona_id in self.fines:
+            self.fines[persona_id]["penalties"].append({"type":penalty_type, "amount": penalty_amount})
+        else:
+            print("собу не знайдено")
+    def remove_penalty(self, person_id, penalty_index):#удаление штрафа
+        if person_id in self.fines and 0 <= penalty_index < len (self.fines[person_id]["penalties"][penalty_index]):
+            del self.fines[person_id]["penalties"][penalty_index]
+        else:
+             print("Недійсна особа або штрафний індекс")
 
-    def remove_fine(self, fine):
-        if fine in self.fines:
-            self.fines.remove(fine)
-
-    def update_info(self, name=None, city=None):
-        if name:
-            self.name = name
-        if city:
-            self.city = city
-
-class Fine:
-    def __init__(self, fine_type, amount):
-        self.fine_type = fine_type
-        self.amount = amount
-
-class TaxInspectorateDatabase:
-    def __init__(self):
-        self.people = {}
-
-    def add_person(self, personal_id, name, city):
-        if personal_id not in self.people:
-            self.people[personal_id] = Person(personal_id, name, city)
-
-    def add_fine_to_person(self, personal_id, fine_type, amount):
-        if personal_id in self.people:
-            fine = Fine(fine_type, amount)
-            self.people[personal_id].add_fine(fine)
-
-    def remove_fine_from_person(self, personal_id, fine):
-        if personal_id in self.people:
-            self.people[personal_id].remove_fine(fine)
-
-    def update_person_info(self, personal_id, name=None, city=None):
-        if personal_id in self.people:
-            self.people[personal_id].update_info(name, city)
-
-    def print_database(self):
-        for personal_id, person in self.people.items():
-            print(f"Personal ID: {personal_id}")
-            print(f"Name: {person.name}")
-            print(f"City: {person.city}")
-            print("Fines:")
-            for fine in person.fines:
-                print(f"- Type: {fine.fine_type}, Amount: {fine.amount}")
-            print()
-
-    def print_data_by_personal_id(self, personal_id):
-        if personal_id in self.people:
-            person = self.people[personal_id]
-            print(f"Personal ID: {personal_id}")
-            print(f"Name: {person.name}")
-            print(f"City: {person.city}")
-            print("Fines:")
-            for fine in person.fines:
-                print(f"- Type: {fine.fine_type}, Amount: {fine.amount}")
+    def print_full_fines(self):
+        for person_id, data, in self.fines.items():
+            print("Peraonal ID", person_id)
+            print("Name", data["city"])
+            print("City:", data["city"])
+            print("Penalties:")
+            for penalty in data["penalties"]:
+                print("Type:", penalty["type"])
+                print("Amount:", penalty["amount"])
+                print()
+    def print_by_personal_id(self, personal_id):
+        if personal_id in self.fines: data = self.fines[personal_id]
+        if personal_id in self.fines: city = self.fines[personal_id]
+        print("Personal ID:", personal_id)
+        print("Name:", data ["name"])
+        print("City:", city["city"])
+        print("Penalties:")
+        for penalty in data["penalties"]:
+            print("Type", penalty["type"])
+            print("Amount", penalty["amount"])
             print()
         else:
-            print("Person not found in the database.")
+             print("Особа не знайдена у штрафах")
 
-    def print_data_by_fine_type(self, fine_type):
+    def by_penalty_type(self,penalty_type):#тип штрафа
         found = False
-        for personal_id, person in self.people.items():
-            for fine in person.fines:
-                if fine.fine_type == fine_type:
+        for personal_id, data in self.fines.items():
+             for penalty in data["penalties"]:
+                 if penalty["type"] == penalty_type:
+                     if not found:
+                         print("Penalties of type", penalty_type + ":")
+                         found = True
+                         print("Penalties of type", penalty_type + ":")
+                         found = True
+                         print("Name", data["city"])
+                         print("City", data ["city"])
+                         print("Amount", penalty["amount"])
+                         print()
+             if not found:
+                 print("No penalties of type", penalty_type)
+    def by_city (self, city):
+        found = False
+        for personal_id , data in self.fines.items():
+            if  data["city"] == city:
+                if not found:
+                    print("penalty for resident of", city + ":")
                     found = True
-                    print(f"Personal ID: {personal_id}")
-                    print(f"Name: {person.name}")
-                    print(f"City: {person.city}")
-                    print(f"Fine Type: {fine.fine_type}, Amount: {fine.amount}")
-                    print()
-        if not found:
-            print("No fines of this type found in the database.")
+                    print("Personal Id")
+                    print("Name", data["name"])
+                    print("Penalty:" )
+                    for penalty in data["penalties"]:
+                        print("Amount", penalty["amount"])
+                        print()
+                        if not found:
+                            print("no rezidents found in", city)
+    def update_personal_info(self, personal_id, new_name = None, new_city=None):
+        if personal_id in self.fines:
+            if new_name:
+                self.fines[personal_id] ["city"] = new_city
+        else:
+            print("Особа не знайдена")
+    def update_penalty_info(self, personal_id, penalty_index, new_penalty_type = None, new_penalty_amount = None):
+        if personal_id in self.fines and 0 <= penalty_index < len(self.fines[personal_id]["penalties"]):
+           if new_penalty_type:
+               self.fines[personal_id]["penalties"] [penalty_index]["type"] = new_penalty_type
+               if new_penalty_amount:
+                   self.fines[personal_id]["penalties"][penalty_index]["amount"] = new_penalty_amount
+               else:
+                   print("Недійсний ідентифікатор особи або штрафний індекс")
 
-    def print_data_by_city(self, city):
-        found = False
-        for personal_id, person in self.people.items():
-            if person.city == city:
-                found = True
-                print(f"Personal ID: {personal_id}")
-                print(f"Name: {person.name}")
-                print(f"City: {person.city}")
-                print("Fines:")
-                for fine in person.fines:
-                    print(f"- Type: {fine.fine_type}, Amount: {fine.amount}")
-                print()
-        if not found:
-            print("No people found from this city in the database.")
-
-
-def main():
-    database = TaxInspectorateDatabase()
-
-    database.add_person("12345", "John Doe", "New York")
-    database.add_person("67890", "Alice Smith", "Los Angeles")
-
-    database.add_fine_to_person("12345", "Parking violation", 50)
-    database.add_fine_to_person("12345", "Speeding", 100)
-    database.add_fine_to_person("67890", "Parking violation", 75)
-
-    print("Printing full database:")
-    database.print_database()
-
-    print("Printing data for personal ID 12345:")
-    database.print_data_by_personal_id("12345")
-
-    print("Printing data for 'Parking violation' fines:")
-    database.print_data_by_fine_type("Parking violation")
-
-    print("Printing data for people from New York:")
-    database.print_data_by_city("New York")
-
-
-if __name__ == "__main__":
-    main()
+fines = TaxPenaltyDatabase
+#Додавання особи
+fines.add_person("23","Андрій","Миколаїв")
+#Додавання штрафів
+fines.add_penalty("123", "Порушення", 500)
+#Видалення повної бази данних
+print("Full fines")
+fines.print_full_fines()
+print()
+#Виведення даних за персональним кодом
+fines.by_penalty_type("Додаток на не рухомість")
+print()
+#виведення данних за місто
+print("Data for city")
+fines.by_city("Миколаїв")
+print()
+#Додавання нової особи з інформацією
+fines.add_personal("28", "Олена Сидорова", "Одесса")
+print("Додавання нової особи Олена Сидорова з Одесси")
+#Оновлення інформації про особу та штрафи
+fines.update_personal_info("45", new_city="London")
+fines.update_personal_info("283", 123, new_penalty_type="Податок на доходи")
+#Виведення оновленої бази данних
+print()
+fines.print_full_fines
