@@ -137,12 +137,7 @@ class TaxDatabase:
         else:
             print("Person with PIN {} not found.".format(pin))
 
-    def update_fine(self, pin, old_fine, new_fine):
-        target_node = self._find_node_by_pin(self.root, pin)
-        if target_node:
-            if old_fine in target_node.fines:
-                index = target_node.fines.index(old_fine)
-                target_node.fines[index] = new_fineclass TaxDatabase:
+
 
     def update_fine(self, pin, old_fine, new_fine):
         target_node = self._find_node_by_pin(self.root, pin)
